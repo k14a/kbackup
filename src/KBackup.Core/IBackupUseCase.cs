@@ -1,5 +1,7 @@
+using KintoneNetLibrary.Backup.Application.DTOs;
+
 namespace KBackup.Core;
 
 public interface IBackupUseCase {
-    Task RunBackupAsync(string subDomain, int appId, string apiToken, string? outDir);
+    Task<BackupResult> RunBackupAsync(string subDomain, int appId, string apiToken, string? outDir);
 }

@@ -1,46 +1,44 @@
 using KBackup.Core;
 using KintoneNetLibrary;
 using KintoneNetLibrary.Backup;
+using KintoneNetLibrary.Backup.Application.DTOs;
 using KintoneNetLibrary.Backup.Application.Interfaces;
+using KintoneNetLibrary.CodeGen.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace KBackup.Infrastructure;
 
 public class KintoneRepository(
     IBackupService backupService,
+    IHttpClientFactory httpClientFactory,
+    ISchemaProvider schemaProvider,
     ILogger<KintoneRepository> logger) : IKintoneRepository {
     private readonly IBackupService _backupService = backupService;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+    private readonly ISchemaProvider _schemaProvider = schemaProvider;
     private readonly ILogger<KintoneRepository> _logger = logger;
 
-    public async Task<KintoneBackupData> GetAppBackupDataAsync(int appId) {
-        this._logger.LogInformation("Fetching Kintone data. App={AppId}", appId);
+    public async Task<BackupResult> RunBackupAsync(
+        string subDomain,
+        int appId,
+        string apiToken,
+        string? outDir) {
+        var service = new BackupService(
+            new BackupOptions {
+                SubDomain = subDomain,
+                AppID = appId,
+                ApiToken = apiToken,
+                OutputPath = BuildOutputPath(outDir, appId),
+                DownloadFiles = true,
+                IncludeFieldSchema = true,
+                Overwrite = false
+            },
+            this._schemaProvider,
+            _httpClient,
+            this._logger
+        );
 
-        var result = await this._backupService.RunBackupAsync();
-        if (!result.Success) {
-            this._logger.LogError("Failed to fetch Kintone data. App={AppId}, Error={Error}", appId, result.ErrorMessage);
-            throw new Exception($"Failed to fetch Kintone data: {result.ErrorMessage}");
-        } else if (result.IsPartialSuccess) {
-            this._logger.LogWarning("Partial success in fetching Kintone data. App={AppId}, Warning={Warning}", appId, result.WarningMessage);
-        } else {
-            this._logger.LogInformation("Successfully fetched Kintone data. App={AppId}", appId);
-        }
-        // // --- 1. スキーマ取得（仮） ---
-        // var schema = await this._backupService.RunBackupAsync();
-
-        // // --- 2. レコード取得（仮） ---
-        // var records = await this._backupService.GetAllRecordsAsync(appId);
-
-        // // --- 3. 添付ファイル取得（仮） ---
-        // var files = new List<KintoneFileData>();
-        // // ※後で実装
-
-        // return new KintoneBackupData {
-        //     AppName = schema.AppName,
-        //     Schema = schema,
-        //     Records = records,
-        //     Files = files
-        // };
-        return null;
+        return await service.RunBackupAsync();
     }
 
     public async Task SaveBackupAsync(int appId, KintoneBackupData data, string outputDirectory) {

@@ -1,4 +1,4 @@
-using KintoneNetLibrary.Domain.Interfaces;
+using KintoneNetLibrary.Backup.Application.DTOs;
 using Microsoft.Extensions.Logging;
 
 namespace KBackup.Core;
@@ -10,20 +10,33 @@ public class BackupUseCase : IBackupUseCase {
     public BackupUseCase(
         IKintoneRepository repository,
         ILogger<BackupUseCase> logger) {
-
-        this._repository = repository;
-        this._logger = logger;
+        _repository = repository;
+        _logger = logger;
     }
 
-    public async Task RunBackupAsync(string subDomain, int appId, string apiToken, string? outDir) {
-        this._logger.LogInformation("BackupUseCase started. App={AppId}", appId);
+    public async Task<BackupResult> RunBackupAsync(
+        string subDomain,
+        int appId,
+        string apiToken,
+        string? outDir) {
+        _logger.LogInformation("BackupUseCase started. App={AppId}", appId);
 
-        // 1. データ取得（スキーマ・レコード・添付ファイルなど）
-        var data = await this._repository.GetAppBackupDataAsync(appId);
+        // Repository にバックアップ処理を委譲
+        var result = await _repository.RunBackupAsync(
+            subDomain,
+            appId,
+            apiToken,
+            outDir
+        );
 
-        // 2. 保存（Infrastructure 側に委譲）
-        await this._repository.SaveBackupAsync(appId, data, outDir);
+        if (!result.Success) {
+            _logger.LogWarning("BackupUseCase finished with errors. App={AppId}", appId);
+        } else if (result.IsPartialSuccess) {
+            _logger.LogWarning("BackupUseCase finished with warnings. App={AppId}", appId);
+        } else {
+            _logger.LogInformation("BackupUseCase finished successfully. App={AppId}", appId);
+        }
 
-        this._logger.LogInformation("BackupUseCase finished. App={AppId}", appId);
+        return result;
     }
 }
