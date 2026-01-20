@@ -19,6 +19,10 @@ public class KintoneRepository(
         if (!result.Success) {
             this._logger.LogError("Failed to fetch Kintone data. App={AppId}, Error={Error}", appId, result.ErrorMessage);
             throw new Exception($"Failed to fetch Kintone data: {result.ErrorMessage}");
+        } else if (result.IsPartialSuccess) {
+            this._logger.LogWarning("Partial success in fetching Kintone data. App={AppId}, Warning={Warning}", appId, result.WarningMessage);
+        } else {
+            this._logger.LogInformation("Successfully fetched Kintone data. App={AppId}", appId);
         }
         // // --- 1. スキーマ取得（仮） ---
         // var schema = await this._backupService.RunBackupAsync();
