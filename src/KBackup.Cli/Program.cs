@@ -1,6 +1,12 @@
 using System.CommandLine;
-using System.ComponentModel;
 using KBackup.Cli.Commands;
+using KBackup.Core;
+using KBackup.Core.Interfaces;
+using KBackup.Infrastructure;
+using KintoneNetLibrary.Backup.Application.Interfaces;
+using KintoneNetLibrary.Backup.Infrastructure.Services;
+using KintoneNetLibrary.CodeGen.Application.Interfaces;
+using KintoneNetLibrary.CodeGen.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,13 +24,15 @@ builder.Services.AddLogging(config => {
 // DI: KintoneNetLibrary 系
 // -----------------------------
 builder.Services.AddSingleton<IBackupService, BackupService>();
-builder.Services.AddSingleton<IKintoneBackupService, KintoneBackupService>();
-builder.Services.AddSingleton<IKintoneCodeGenService, KintoneCodeGenService>();
+builder.Services.AddSingleton<IRestoreService, RestoreService>();
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<ISchemaProvider, SchemaProvider>();
 
 // -----------------------------
 // DI: kbackup Core / Infrastructure
 // -----------------------------
 builder.Services.AddSingleton<IBackupUseCase, BackupUseCase>();
+builder.Services.AddSingleton<IRestoreUseCase, RestoreUseCase>();
 builder.Services.AddSingleton<IKintoneRepository, KintoneRepository>();
 
 var host = builder.Build();
@@ -32,22 +40,23 @@ var host = builder.Build();
 // -----------------------------
 // CLI 定義
 // -----------------------------
+var backupLogger = host.Services.GetRequiredService<ILogger<BackupCommand>>();
+var restoreLogger = host.Services.GetRequiredService<ILogger<RestoreCommand>>();
 var root = new RootCommand("kbackup CLI tool") {
-    new BackupCommand(host)
+    new BackupCommand(host, backupLogger),
+    new RestoreCommand(host, restoreLogger)
 };
 
 
 // -----------------------------
 // 実行（最小限）
 // -----------------------------
-var logger = host.Services.GetRequiredService<ILoggerFactory>()
-                          .CreateLogger("kbackup");
+var logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("kbackup");
 
 logger.LogInformation("kbackup CLI started.");
 
 try {
-    // ここは後で System.CommandLine に置き換える
-    logger.LogInformation("No command implemented yet.");
+    await root.Parse(args).InvokeAsync();
 
 } catch (Exception ex) {
     logger.LogError(ex, "Unhandled exception occurred.");

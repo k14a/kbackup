@@ -69,3 +69,6 @@ docker-compose.*
 
 # Raw/Diffで使用するJSONファイル
 App*.metadata.json
+
+# Backup先フォルダ
+backup/

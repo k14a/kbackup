@@ -1,42 +1,34 @@
+using KBackup.Core.Interfaces;
+using KBackup.Core.Logging;
+using KBackup.Core.Models;
 using KintoneNetLibrary.Backup.Application.DTOs;
 using Microsoft.Extensions.Logging;
 
 namespace KBackup.Core;
 
-public class BackupUseCase : IBackupUseCase {
-    private readonly IKintoneRepository _repository;
-    private readonly ILogger<BackupUseCase> _logger;
+public class BackupUseCase(IKintoneRepository repository, ILogger<BackupUseCase> logger) : IBackupUseCase {
+    private readonly IKintoneRepository _repository = repository;
+    private readonly ILogger<BackupUseCase> _logger = logger;
 
-    public BackupUseCase(
-        IKintoneRepository repository,
-        ILogger<BackupUseCase> logger) {
-        _repository = repository;
-        _logger = logger;
-    }
+    public async Task<BackupResult> RunBackupAsync(BackupRequest request) {
+        StaticLogMessages.MethodStart(this._logger, message: $"BackupUseCase started. App={request.AppId}");
 
-    public async Task<BackupResult> RunBackupAsync(
-        string subDomain,
-        int appId,
-        string apiToken,
-        string? outDir) {
-        _logger.LogInformation("BackupUseCase started. App={AppId}", appId);
+        try {
+            // Repository にバックアップ処理を委譲
+            var result = await this._repository.BackupAsync(request);
 
-        // Repository にバックアップ処理を委譲
-        var result = await _repository.RunBackupAsync(
-            subDomain,
-            appId,
-            apiToken,
-            outDir
-        );
+            if (!result.Success) {
+                this._logger.LogWarning("BackupUseCase finished with errors. App={AppId}", request.AppId);
+            } else if (result.IsPartialSuccess) {
+                this._logger.LogWarning("BackupUseCase finished with warnings. App={AppId}", request.AppId);
+            } else {
+                this._logger.LogInformation("BackupUseCase finished successfully. App={AppId}", request.AppId);
+            }
 
-        if (!result.Success) {
-            _logger.LogWarning("BackupUseCase finished with errors. App={AppId}", appId);
-        } else if (result.IsPartialSuccess) {
-            _logger.LogWarning("BackupUseCase finished with warnings. App={AppId}", appId);
-        } else {
-            _logger.LogInformation("BackupUseCase finished successfully. App={AppId}", appId);
+            return result;
+
+        } finally {
+            StaticLogMessages.MethodFinish(this._logger, message: $"BackupUseCase finished. App={request.AppId}");
         }
-
-        return result;
     }
 }

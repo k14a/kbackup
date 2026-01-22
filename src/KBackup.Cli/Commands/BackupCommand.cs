@@ -1,170 +1,131 @@
 using System.CommandLine;
+using KBackup.Cli.Utils;
+using KBackup.Core.Interfaces;
+using KBackup.Core.Logging;
+using KBackup.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic;
-using KBackup.Core;
-using KintoneNetLibrary.Backup.Application.DTOs;
-using Spectre.Console;
-using KBackup.Core.Enums;
-using System.Text.Json;
-using KBackup.Cli.Config;
+using Microsoft.Extensions.Logging;
 
 namespace KBackup.Cli.Commands;
 
-public class BackupCommand : Command {
-    public BackupCommand(IHost host) : base("backup", "Perform backup of kintone application data") {
-        // Define options
-        var subDomainOption = new Option<string>("--sub-domain") {
-            Required = true,
-            Description = "Kintone sub-domain"
-        };
+public class BackupCommand : BaseCommand {
+    public BackupCommand(IHost host, ILogger<BackupCommand> logger)
+        : base("backup", "Perform backup of kintone application data", logger) {
 
-        var appIdOption = new Option<int>("--app-id") {
-            Required = true,
-            Description = "Kintone application ID"
-        };
+        StaticLogMessages.MethodStart(this._logger);
 
-        var apiToken = new Option<string>("--api-token") {
-            Required = false,
-            Description = "Kintone API token"
-        };
+        try {
+            // Define options
+            var subDomainOption = new Option<string>("--sub-domain") {
+                Required = true,
+                Description = "Kintone sub-domain"
+            };
+            var appIdOption = new Option<int>("--app") {
+                Required = true,
+                Description = "Kintone application ID."
+            };
+            var apiToken = new Option<string>("--api-token") {
+                Required = false,
+                Description = "Kintone API token"
+            };
+            var outDirOption = new Option<string?>("--out-dir") {
+                Description = "Output directory for backup files."
+            };
+            var downloadFilesOption = new Option<bool?>("--download-files") {
+            };
+            var includeFieldSchemaOption = new Option<bool?>("--include-field-schema") {
+                Description = "Whether to include field schema in the backup. Default is true."
+            };
+            var overwriteOption = new Option<bool?>("--overwrite") {
+                Description = "Whether to overwrite existing files in the output directory. Default is false."
+            };
+            var prettyOption = new Option<bool?>("--pretty") {
+                Description = "Whether to pretty-print JSON output. Default is false."
+            };
+            var escapeUnicodeOption = new Option<bool?>("--escape") {
+                Description = "Whether to escape unicode characters in JSON output. Default is true."
+            };
+            var queryOption = new Option<string?>("--query") {
+                Description = "Query expression to filter records for backup."
+            };
 
-        var outDirOption = new Option<string?>("--out-dir") {
-            Description = "Output directory for backup files"
-        };
+            // Add options to the command
+            this.Add(subDomainOption);
+            this.Add(appIdOption);
+            this.Add(apiToken);
+            this.Add(outDirOption);
+            this.Add(downloadFilesOption);
+            this.Add(includeFieldSchemaOption);
+            this.Add(overwriteOption);
+            this.Add(prettyOption);
+            this.Add(escapeUnicodeOption);
+            this.Add(queryOption);
+            this.SetAction(async parseResult => {
+                var config = this.LoadConfig(parseResult);
 
-        var colorOption = new Option<ColorMode>("--color") {
-            Description = "Enable colored output",
-            DefaultValueFactory = _ => ColorMode.Auto
-        };
+                var subDomain = parseResult.GetValue(subDomainOption)
+                    ?? config?.SubDomain
+                    ?? throw new ArgumentException("Sub-domain must be specified either via command line or config file.");
+                var appId = parseResult.GetValue(appIdOption) != 0
+                    ? parseResult.GetValue(appIdOption)
+                    : config?.AppId
+                        ?? throw new ArgumentException("App ID must be specified either via command line or config file.");
+                var apiTokenValue = parseResult.GetValue(apiToken)
+                    ?? config?.ApiToken
+                    ?? throw new ArgumentException("API token must be specified either via command line or config file.");
+                var outDir = parseResult.GetValue(outDirOption)
+                    ?? config?.OutputDirectory
+                    ?? ".";
+                var downloadFiles = parseResult.GetValue(downloadFilesOption)
+                    ?? config?.DownloadFiles
+                    ?? true;
+                var includeFieldSchema = parseResult.GetValue(includeFieldSchemaOption)
+                    ?? config?.IncludeFieldSchema
+                    ?? true;
+                var overwrite = parseResult.GetValue(overwriteOption)
+                    ?? config?.Overwrite
+                    ?? false;
+                var pretty = parseResult.GetValue(prettyOption)
+                ?? config?.Pretty
+                ?? false;
+                var escapeUnicode = parseResult.GetValue(escapeUnicodeOption)
+                    ?? config?.EscapeUnicode
+                    ?? false;
+                var query = parseResult.GetValue(queryOption) ?? null;
 
-        var jsonOption = new Option<bool>("--json") {
-            Description = "Output result as JSON"
-        };
+                var colorMode = parseResult.GetValue(this.ColorOption);
+                var jsonOutput = parseResult.GetValue(this.JsonOption);
+                var logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("kbackup");
 
-        var configOption = new Option<string?>("--config") {
-            Description = "Path to kbackup.config.json"
-        };
+                var request = new BackupRequest {
+                    SubDomain = subDomain,
+                    AppId = appId,
+                    ApiToken = apiTokenValue,
+                    OutputDirectory = new DirectoryInfo(outDir),
+                    DownloadFiles = downloadFiles,
+                    IncludeFieldSchema = includeFieldSchema,
+                    Overwrite = overwrite,
+                    Pretty = pretty,
+                    EscapeUnicode = escapeUnicode,
+                    Query = query
+                };
+                var useCase = host.Services.GetRequiredService<IBackupUseCase>();
+                var result = await useCase.RunBackupAsync(request);
 
-        // Add options to the command
-        this.Add(subDomainOption);
-        this.Add(appIdOption);
-        this.Add(apiToken);
-        this.Add(outDirOption);
-        this.Add(colorOption);
-        this.Add(jsonOption);
-        this.Add(configOption);
+                // JSON 出力が指定された場合は最優先
+                if (jsonOutput) {
+                    CommandUtils.PrintJson(result, pretty, escapeUnicode);
+                    return;
+                }
 
-        this.SetAction(async parseResult => {
-            var configPath = parseResult.GetValue(configOption);
-            var config = ConfigLoader.Load(configPath);
+                // 色付き出力
+                var useColor = CommandUtils.ShouldUseColor(colorMode);
+                CommandUtils.PrintResult(result, useColor);
+            });
 
-            var subDomain = parseResult.GetValue(subDomainOption)
-                ?? config?.SubDomain
-                ?? throw new ArgumentException("Sub-domain must be specified either via command line or config file.");
-            var appId = parseResult.GetValue(appIdOption) != 0 ? config?.AppId
-                ?? throw new ArgumentException("App ID must be specified either via command line or config file.");
-            var apiTokenValue = parseResult.GetValue(apiToken)
-                ?? config?.ApiToken
-                ?? throw new ArgumentException("API token must be specified either via command line or config file.");
-            var outDir = parseResult.GetValue(outDirOption)
-                ?? config?.OutputDirectory
-                ?? ".";
-
-            var colorMode = parseResult.GetValue(colorOption);
-            var jsonOutput = parseResult.GetValue(jsonOption);
-
-            var logger = host.Services.GetRequiredService<ILoggerFactory>()
-                                          .CreateLogger("kbackup");
-
-            var useCase = host.Services.GetRequiredService<IBackupUseCase>();
-
-            var result = await useCase.RunBackupAsync(
-                subDomain: subDomain,
-                appId: appId,
-                apiToken: apiTokenValue,
-                outDir: outDir
-            );
-
-            // JSON 出力が指定された場合は最優先
-            if (jsonOutput) {
-                PrintJson(result);
-                return;
-            }
-
-            // 色付き出力
-            var useColor = ShouldUseColor(colorMode);
-            PrintResult(result, useColor);
-
-            // Handler logic goes here
-            Console.WriteLine($"Backing up app {appId} from {subDomain} to {outDir}");
-        });
-    }
-    private static bool ShouldUseColor(ColorMode mode) {
-        return mode switch {
-            ColorMode.Always => true,
-            ColorMode.Never => false,
-            ColorMode.Auto => !Console.IsOutputRedirected,
-            _ => false
-        };
-    }
-    private static void PrintResult(BackupResult result, bool color) {
-        if (!color) {
-            // 色なしの標準出力
-            Console.WriteLine(result.Success
-                ? "Backup completed successfully."
-                : "Backup failed.");
-
-            if (result.IsPartialSuccess) {
-                Console.WriteLine("Backup completed with warnings.");
-            }
-
-            foreach (var w in result.Warnings) {
-                Console.WriteLine($"WARNING: {w}");
-            }
-
-            foreach (var s in result.Skipped) {
-                Console.WriteLine($"SKIPPED: {s}");
-            }
-
-            foreach (var e in result.ErrorMessages) {
-                Console.WriteLine($"ERROR: {e}");
-            }
-
-            return;
+        } finally {
+            StaticLogMessages.MethodFinish(this._logger);
         }
-
-        // 色付き出力（Spectre.Console）
-        if (!result.Success) {
-            AnsiConsole.MarkupLine("[red]Backup failed[/]");
-        } else if (result.IsPartialSuccess) {
-            AnsiConsole.MarkupLine("[yellow]Backup completed with warnings[/]");
-        } else {
-            AnsiConsole.MarkupLine("[green]Backup completed successfully[/]");
-        }
-
-        foreach (var w in result.Warnings) {
-            AnsiConsole.MarkupLine($"[yellow]WARNING:[/] {w}");
-        }
-
-        foreach (var s in result.Skipped) {
-            AnsiConsole.MarkupLine($"[blue]SKIPPED:[/] {s}");
-        }
-
-        foreach (var e in result.ErrorMessages) {
-            AnsiConsole.MarkupLine($"[red]ERROR:[/] {e}");
-        }
-    }
-    private static void PrintJson(BackupResult result) {
-        var json = JsonSerializer.Serialize(
-            result,
-            new JsonSerializerOptions {
-                WriteIndented = true
-            }
-        );
-
-        Console.WriteLine(json);
     }
 }
