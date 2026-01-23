@@ -24,7 +24,10 @@ public partial class KintoneRepository {
                 BackupJsonPath = Path.Combine(request.BackupDirectory.FullName, "backup.json"),
                 Mode = request.Mode,
                 RestoreFiles = request.RestoreFiles,
-                Force = request.Force
+                Force = request.Force,
+                DryRun = request.DryRun,
+                ValidateOnly = request.ValidateOnly,
+                BatchSize = request.BatchSize
             };
 
             // RestoreService にオプションを注入

@@ -3,10 +3,12 @@ using KBackup.Cli.Commands;
 using KBackup.Core;
 using KBackup.Core.Interfaces;
 using KBackup.Infrastructure;
+using KintoneNetLibrary.Application.Interfaces;
 using KintoneNetLibrary.Backup.Application.Interfaces;
 using KintoneNetLibrary.Backup.Infrastructure.Services;
 using KintoneNetLibrary.CodeGen.Application.Interfaces;
 using KintoneNetLibrary.CodeGen.Infrastructure.Services;
+using KintoneNetLibrary.Infrastructure.Api;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,6 +29,7 @@ builder.Services.AddSingleton<IBackupService, BackupService>();
 builder.Services.AddSingleton<IRestoreService, RestoreService>();
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<ISchemaProvider, SchemaProvider>();
+builder.Services.AddTransient<IKintoneAppMetadataApi, KintoneAppMetadataApi>();
 
 // -----------------------------
 // DI: kbackup Core / Infrastructure
