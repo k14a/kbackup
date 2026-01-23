@@ -53,7 +53,7 @@ var root = new RootCommand("kbackup CLI tool") {
 // -----------------------------
 var logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("kbackup");
 
-logger.LogInformation("kbackup CLI started.");
+// logger.LogInformation("kbackup CLI started.");
 
 try {
     await root.Parse(args).InvokeAsync();
@@ -62,4 +62,4 @@ try {
     logger.LogError(ex, "Unhandled exception occurred.");
 }
 
-logger.LogInformation("kbackup CLI finished.");
+// logger.LogInformation("kbackup CLI finished.");

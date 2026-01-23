@@ -10,4 +10,5 @@ public sealed class BackupRequest : BaseKintoneRequest {
     public bool Pretty { get; init; } = false;
     public bool EscapeUnicode { get; init; } = true;
     public string? Query { get; init; } = null;
+    public int SplitSize { get; init; } = 1000;
 }

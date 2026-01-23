@@ -22,7 +22,8 @@ public partial class KintoneRepository : IKintoneRepository {
                 Overwrite = request.Overwrite,
                 Pretty = request.Pretty,
                 EscapeUnicode = request.EscapeUnicode,
-                Query = request.Query
+                Query = request.Query,
+                SplitSize = request.SplitSize
             };
 
             return await this._backupService.RunBackupAsync();
