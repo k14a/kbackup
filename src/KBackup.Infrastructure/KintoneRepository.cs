@@ -4,10 +4,8 @@ using Microsoft.Extensions.Logging;
 
 namespace KBackup.Infrastructure;
 
-public partial class KintoneRepository(
-    IBackupService backupService,
-    IRestoreService restoreService,
-    ILogger<KintoneRepository> logger) : IKintoneRepository {
+public partial class KintoneRepository(IBackupService backupService, IRestoreService restoreService, ILogger<KintoneRepository> logger)
+    : IKintoneRepository {
 
     private readonly IBackupService _backupService = backupService;
     private readonly IRestoreService _restoreService = restoreService;

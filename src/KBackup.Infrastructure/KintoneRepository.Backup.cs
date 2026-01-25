@@ -1,9 +1,7 @@
-using KBackup.Core;
 using KBackup.Core.Interfaces;
 using KBackup.Core.Logging;
 using KBackup.Core.Models;
 using KintoneNetLibrary.Backup.Application.DTOs;
-using Microsoft.Extensions.Logging;
 
 namespace KBackup.Infrastructure;
 

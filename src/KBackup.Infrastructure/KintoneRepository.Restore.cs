@@ -1,11 +1,6 @@
-using KBackup.Core;
-using KBackup.Core.Interfaces;
 using KBackup.Core.Logging;
 using KBackup.Core.Models;
 using KintoneNetLibrary.Backup.Application.DTOs;
-using KintoneNetLibrary.Backup.Application.Interfaces;
-using KintoneNetLibrary.Backup.Domain.Enums;
-using Microsoft.Extensions.Logging;
 
 namespace KBackup.Infrastructure;
 
@@ -21,7 +16,7 @@ public partial class KintoneRepository {
                 SubDomain = request.SubDomain,
                 AppID = request.AppId,
                 ApiToken = request.ApiToken,
-                BackupJsonPath = Path.Combine(request.BackupDirectory.FullName, "backup.json"),
+                BackupRootPath = request.BackupDirectory,
                 Mode = request.Mode,
                 RestoreFiles = request.RestoreFiles,
                 Force = request.Force,

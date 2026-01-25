@@ -1,3 +1,5 @@
+using KBackup.Core.Enums;
+
 namespace KBackup.Core.Models;
 
 public sealed class BackupRequest : BaseKintoneRequest {
@@ -11,4 +13,6 @@ public sealed class BackupRequest : BaseKintoneRequest {
     public bool EscapeUnicode { get; init; } = true;
     public string? Query { get; init; } = null;
     public int SplitSize { get; init; } = 1000;
+    public ColorMode ColorMode { get; init; } = ColorMode.Auto;
+    public bool JsonOutput { get; init; } = false;
 }
