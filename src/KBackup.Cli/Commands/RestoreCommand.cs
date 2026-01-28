@@ -15,6 +15,20 @@ public class RestoreCommand : BaseCommand {
     public RestoreCommand(IHost host, ILogger<RestoreCommand> logger)
         : base("restore", "Restore Kintone application data from backup", logger) {
 
+        // Restore用のオプションをすべて登録
+        this.Add(OptionFactory.SubDomain);
+        this.Add(OptionFactory.AppId);
+        this.Add(OptionFactory.ApiToken);
+        this.Add(OptionFactory.BackupDir);
+        this.Add(OptionFactory.Mode);
+        this.Add(OptionFactory.RestoreFiles);
+        this.Add(OptionFactory.Force);
+        this.Add(OptionFactory.DryRun);
+        this.Add(OptionFactory.ValidateOnly);
+        this.Add(OptionFactory.BatchSize);
+        this.Add(OptionFactory.OutputColorMode);
+        this.Add(OptionFactory.JsonOutput);
+
         this.SetAction(async parseResult => {
             var config = this.LoadConfig(parseResult);
             var opts = RestoreOptionsResolver.Resolve(parseResult, config);

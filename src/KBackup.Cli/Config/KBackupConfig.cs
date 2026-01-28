@@ -13,9 +13,7 @@ public sealed class KBackupConfig {
     public bool DownloadFiles { get; set; } = true;
     public bool IncludeFieldSchema { get; set; } = true;
     public bool Overwrite { get; set; } = false;
-    public RestoreMode Mode { get; set; } = RestoreMode.Upsert;
     public bool Force { get; set; } = false;
-    public bool RestoreFiles { get; set; } = false;
     public bool Pretty { get; set; } = false;
     public bool EscapeUnicode { get; set; } = true;
     public string Query { get; set; } = string.Empty;
@@ -23,6 +21,8 @@ public sealed class KBackupConfig {
     #endregion
     #region <<for RestoreRequest>>
     public string? BackupDirectory { get; set; }
+    public RestoreMode Mode { get; set; } = RestoreMode.Upsert;
+    public bool RestoreFiles { get; set; } = true;
     public bool DryRun { get; set; } = false;
     public bool ValidateOnly { get; set; } = false;
     public int BatchSize { get; set; } = KintoneConstants.KintoneLimit;

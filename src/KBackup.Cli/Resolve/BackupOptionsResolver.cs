@@ -22,7 +22,7 @@ public static class BackupOptionsResolver {
             Overwrite = BaseCommand.Resolve(result, OptionFactory.Overwrite, config?.Overwrite ?? false),
             Pretty = BaseCommand.Resolve(result, OptionFactory.Pretty, config?.Pretty ?? false),
             EscapeUnicode = BaseCommand.Resolve(result, OptionFactory.EscapeUnicode, config?.EscapeUnicode ?? false),
-            Query = BaseCommand.Resolve(result, OptionFactory.Query, config?.Query),
+            Query = BaseCommand.Resolve(result, OptionFactory.Query, config?.Query ?? string.Empty),
             SplitSize = BaseCommand.Resolve(result, OptionFactory.Split, config?.SplitSize ?? 1000),
 
             // Output settings

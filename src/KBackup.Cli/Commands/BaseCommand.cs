@@ -62,28 +62,10 @@ public abstract class BaseCommand : Command {
         var configPath = parseResult.GetValue(this.ConfigOption);
         return ConfigLoader.Load(configPath);
     }
-    // protected static T Resolve<T>(ParseResult result, Option<T> option, T? configValue, T defaultValue = default!) {
-    //     var cliValue = result.GetValue(option);
-    //     if (cliValue is not null && !cliValue.Equals(default(T))) { return cliValue; }
-    //     if (configValue is not null) { return configValue; }
-    //     return defaultValue;
-    // }
     public static T Resolve<T>(ParseResult result, Option<T> option, T? configValue) {
         var value = result.GetValue(option);
         if (value is not null) { return value; }
         if (configValue is not null) { return configValue; }
         return (T)option.GetDefaultValue()!;
     }
-    // protected static T Resolve<T>(ParseResult result, Option<T> option, T? configValue) {
-    //     // 1. CLI or defaultValue
-    //     var cliOrDefault = result.GetValue(option);
-
-    //     // 2. configValue があれば優先
-    //     if (configValue is not null) {
-    //         return configValue;
-    //     }
-
-    //     // 3. CLI or defaultValue を返す
-    //     return cliOrDefault!;
-    // }
 }

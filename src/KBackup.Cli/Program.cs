@@ -8,7 +8,10 @@ using KintoneNetLibrary.Backup.Application.Interfaces;
 using KintoneNetLibrary.Backup.Infrastructure.Services;
 using KintoneNetLibrary.CodeGen.Application.Interfaces;
 using KintoneNetLibrary.CodeGen.Infrastructure.Services;
+using KintoneNetLibrary.Domain.Access;
+using KintoneNetLibrary.Domain.Entities;
 using KintoneNetLibrary.Infrastructure.Api;
+using KintoneNetLibrary.Infrastructure.Factories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,6 +32,7 @@ builder.Services.AddSingleton<IBackupService, BackupService>();
 builder.Services.AddSingleton<IRestoreService, RestoreService>();
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<ISchemaProvider, SchemaProvider>();
+builder.Services.AddTransient<IKintoneAccessFactory, KintoneAccessFactory>();
 builder.Services.AddTransient<IKintoneAppMetadataApi, KintoneAppMetadataApi>();
 
 // -----------------------------

@@ -92,7 +92,7 @@ public static class OptionFactory {
     public static readonly Option<bool> RestoreFiles =
         new("--restore-files") {
             Description = "Restore attached files (if any)",
-            DefaultValueFactory = _ => false
+            DefaultValueFactory = _ => true
         };
     public static readonly Option<bool> DryRun =
         new("--dry-run") {

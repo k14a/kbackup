@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace KBackup.Core;
 
 public class BackupUseCase(IKintoneRepository repository, ILogger<BackupUseCase> logger) : IBackupUseCase {
+
     private readonly IKintoneRepository _repository = repository;
     private readonly ILogger<BackupUseCase> _logger = logger;
 

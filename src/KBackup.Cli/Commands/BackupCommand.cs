@@ -19,11 +19,31 @@ public class BackupCommand : BaseCommand {
     public BackupCommand(IHost host, ILogger<BackupCommand> logger)
         : base("backup", "Perform backup of kintone application data", logger) {
 
+        // Backup用のオプションをすべて登録
+        this.Add(OptionFactory.SubDomain);
+        this.Add(OptionFactory.AppId);
+        this.Add(OptionFactory.ApiToken);
+
+        this.Add(OptionFactory.OutputDir);
+        this.Add(OptionFactory.DownloadFiles);
+        this.Add(OptionFactory.IncludeFieldSchema);
+        this.Add(OptionFactory.Overwrite);
+        this.Add(OptionFactory.Pretty);
+        this.Add(OptionFactory.EscapeUnicode);
+        this.Add(OptionFactory.Query);
+        this.Add(OptionFactory.Split);
+
+        this.Add(OptionFactory.OutputColorMode);
+        this.Add(OptionFactory.JsonOutput);
+
         // Define options
         this.SetAction(async parseResult => {
             var config = this.LoadConfig(parseResult);
             var opts = BackupOptionsResolver.Resolve(parseResult, config);
             var request = BackupRequestFactory.Create(opts);
+
+            // var factory = host.Services.GetRequiredService<IKintoneAccessFactory>();
+            // var kintoneAccess = factory.Create(request.SubDomain, request.ApiToken);
 
             var useCase = host.Services.GetRequiredService<IBackupUseCase>();
             var result = await useCase.RunBackupAsync(request);
