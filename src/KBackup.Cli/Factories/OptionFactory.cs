@@ -2,6 +2,7 @@ using System.CommandLine;
 using KBackup.Core.Enums;
 using KintoneNetLibrary.Backup.Domain.Enums;
 using KintoneNetLibrary.Domain.Common;
+using static KintoneNetLibrary.Domain.Common.KintoneConstants;
 
 namespace KBackup.Cli.Factories;
 
@@ -69,8 +70,8 @@ public static class OptionFactory {
         };
     public static readonly Option<int> Split =
         new("--split") {
-            Description = "Number of records per split file. If not specified, all records are saved in a single file. Default is 1000. Maximum is 5000.",
-            DefaultValueFactory = _ => 1000
+            Description = $"Number of records per split file. If not specified, all records are saved in a single file. Default is {CursorFetchLimit}. Maximum is 5000.",
+            DefaultValueFactory = _ => CursorFetchLimit
         };
     #endregion
 
