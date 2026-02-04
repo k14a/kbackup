@@ -4,7 +4,15 @@ using KintoneNetLibrary.Backup.Application.DTOs;
 
 namespace KBackup.Infrastructure;
 
+/// <summary>
+/// KintoneRepository
+/// </summary>
 public partial class KintoneRepository {
+    /// <summary>
+    /// RestoreAsync
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<RestoreResult> RestoreAsync(RestoreRequest request) {
         StaticLogMessages.MethodStart(this._logger, message: $"KintoneRepository.RestoreAsync started. App={request.AppId}");
 

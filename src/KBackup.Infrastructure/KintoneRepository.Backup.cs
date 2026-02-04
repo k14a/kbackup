@@ -5,7 +5,15 @@ using KintoneNetLibrary.Backup.Application.DTOs;
 
 namespace KBackup.Infrastructure;
 
+/// <summary>
+/// KintoneRepository
+/// </summary>
 public partial class KintoneRepository : IKintoneRepository {
+    /// <summary>
+    /// BackupAsync
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<BackupResult> BackupAsync(BackupRequest request) {
         StaticLogMessages.MethodStart(this._logger, message: $"KintoneRepository.RunBackupAsync started. App={request.AppId}");
 

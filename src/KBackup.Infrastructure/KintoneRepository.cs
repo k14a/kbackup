@@ -4,6 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace KBackup.Infrastructure;
 
+/// <summary>
+/// KintoneRepository
+/// </summary>
+/// <param name="backupService"></param>
+/// <param name="restoreService"></param>
+/// <param name="logger"></param>
 public partial class KintoneRepository(IBackupService backupService, IRestoreService restoreService, ILogger<KintoneRepository> logger)
     : IKintoneRepository {
 
