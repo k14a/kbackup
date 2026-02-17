@@ -5,14 +5,14 @@ using KintoneNetLibrary.Backup.Application.DTOs;
 namespace KBackup.Infrastructure;
 
 /// <summary>
-/// KintoneRepository
+/// KintoneRepository クラスは、IKintoneRepository インターフェースを実装するクラスであり、Kintone のバックアップおよびリストア処理を実行するためのリポジトリクラスです。このクラスは、KintoneBackupService を使用してバックアップおよびリストア処理を実行し、ILogger を使用して処理の開始と終了、および処理結果に応じたログメッセージを出力します。
 /// </summary>
 public partial class KintoneRepository {
     /// <summary>
-    /// RestoreAsync
+    /// RestoreAsync メソッドは、Kintone のリストア処理を非同期に実行するメソッドであり、RestoreRequest オブジェクトを引数に取ります。このメソッドは、リストア処理の開始と終了、および処理結果に応じたログメッセージを出力します。リストア処理自体は、KintoneRestoreService の RunRestoreAsync メソッドに委譲されます。処理結果は RestoreResult オブジェクトとして返されます。
     /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="request">リストア処理のリクエスト情報を含む RestoreRequest オブジェクト</param>
+    /// <returns>リストア処理の結果を含む RestoreResult オブジェクト</returns>
     public async Task<RestoreResult> RestoreAsync(RestoreRequest request) {
         StaticLogMessages.MethodStart(this._logger, message: $"KintoneRepository.RestoreAsync started. App={request.AppId}");
 

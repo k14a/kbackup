@@ -6,37 +6,20 @@ using Microsoft.Extensions.Logging;
 namespace KBackup.Cli.Commands;
 
 /// <summary>
-/// Represents the base class for commands in the KBackup CLI application.
+/// すべてのコマンドの基底クラス。共通のオプションやロジックを定義する。
 /// </summary>
-/// <remarks>
-/// This class provides common options for commands, including configuration file path,
-/// color output mode, and JSON output format. Derived classes should implement specific
-/// command functionality.
-/// </remarks>
-/// <typeparam name="T">The type of the command.</typeparam>
-/// <param name="name">The name of the command.</param>
-/// <param name="description">A description of the command.</param>
-/// <param name="logger">An instance of <see cref="ILogger{BaseCommand}"/> for logging.</param>
-/// <property name="ConfigOption">
-/// Gets the option for specifying the path to the configuration file.
-/// </property>
-/// <property name="ColorOption">
-/// Gets the option for specifying the color output mode.
-/// </property>
-/// <property name="JsonOption">
-/// Gets the option for specifying whether to output results as JSON.
-/// </property>
-/// <returns>
-/// An instance of <see cref="KBackupConfig"/> loaded from the specified configuration path,
-/// or <c>null</c> if the configuration could not be loaded.
-/// </returns>
-/// <param name="parseResult">The result of parsing the command line arguments.</param>
 public abstract class BaseCommand : Command {
     protected Option<string?> ConfigOption { get; }
     protected Option<ColorMode> ColorOption { get; }
     protected Option<bool> JsonOption { get; }
     protected ILogger<BaseCommand> _logger;
 
+    /// <summary>
+    /// コンストラクタ。コマンドの名前、説明、および共通オプションを定義する。
+    /// </summary>
+    /// <param name="name">コマンドの名前</param>
+    /// <param name="description">コマンドの説明</param>
+    /// <param name="logger">ロガーオブジェクト</param>
     protected BaseCommand(string name, string description, ILogger<BaseCommand> logger) : base(name, description) {
         this._logger = logger;
 
@@ -58,10 +41,24 @@ public abstract class BaseCommand : Command {
         this.Add(this.JsonOption);
     }
 
+    /// <summary>
+    /// コマンドの実行前に、共通の設定を読み込むためのメソッド。コマンド固有のオプションと組み合わせて、最終的な設定を構築する。
+    /// </summary>
+    /// <param name="parseResult">コマンドライン引数の解析結果</param>
+    /// <returns>読み込まれた設定オブジェクト、または <c>null</c></returns>
     protected KBackupConfig? LoadConfig(ParseResult parseResult) {
         var configPath = parseResult.GetValue(this.ConfigOption);
         return ConfigLoader.Load(configPath);
     }
+
+    /// <summary>
+    /// コマンドのオプションを解決するためのユーティリティメソッド。コマンドライン引数、設定ファイル、およびオプションのデフォルト値の優先順位に従って、最終的な値を決定する。
+    /// </summary>
+    /// <typeparam name="T">オプションの型</typeparam>
+    /// <param name="result">コマンドライン引数の解析結果</param>
+    /// <param name="option">対象のオプション</param>
+    /// <param name="configValue">設定ファイルから取得した値</param>
+    /// <returns>最終的に決定されたオプションの値</returns>
     public static T Resolve<T>(ParseResult result, Option<T> option, T? configValue) {
         var value = result.GetValue(option);
         if (value is not null) { return value; }

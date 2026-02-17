@@ -13,9 +13,14 @@ using Microsoft.Extensions.Logging;
 namespace KBackup.Cli.Commands;
 
 /// <summary>
-/// Command for performing backup of kintone application data.
+/// kintoneアプリのデータをバックアップするコマンド。
 /// </summary>
 public class BackupCommand : BaseCommand {
+    /// <summary>
+    /// コンストラクタ。コマンドの名前、説明、およびオプションを定義する。
+    /// </summary>
+    /// <param name="host">ホストオブジェクト</param>
+    /// <param name="logger">ロガーオブジェクト</param>
     public BackupCommand(IHost host, ILogger<BackupCommand> logger)
         : base("backup", "Perform backup of kintone application data", logger) {
 

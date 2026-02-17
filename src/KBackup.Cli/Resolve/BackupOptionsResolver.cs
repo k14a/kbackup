@@ -7,7 +7,16 @@ using KintoneNetLibrary.Domain.Common;
 
 namespace KBackup.Cli.Resolve;
 
+/// <summary>
+/// BackupOptionsResolver クラスは、コマンドライン引数と設定ファイルから BackupOptions オブジェクトを生成するためのクラスです。
+/// </summary>
 public static class BackupOptionsResolver {
+    /// <summary>
+    /// Resolve メソッドは、コマンドライン引数と設定ファイルから BackupOptions オブジェクトを生成します。コマンドライン引数が優先され、設定ファイルの値はコマンドライン引数が提供されない場合に使用されます。
+    /// </summary>
+    /// <param name="result">コマンドライン引数の解析結果を表す ParseResult オブジェクト。</param>
+    /// <param name="config">設定ファイルから読み込まれた KBackupConfig オブジェクト。</param>
+    /// <returns>生成された BackupOptions オブジェクト。</returns>
     public static BackupOptions Resolve(ParseResult result, KBackupConfig? config) {
         return new BackupOptions {
             // BaseKintoneRequest

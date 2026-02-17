@@ -3,7 +3,16 @@ using KBackup.Core.Models;
 
 namespace KBackup.Cli.Factories;
 
+/// <summary>
+/// BackupRequestオブジェクトを生成するためのファクトリークラス。
+/// </summary>
 public static class BackupRequestFactory {
+    /// <summary>
+    /// BackupOptionsからBackupRequestを生成する。オプションの整合性チェックも行う。
+    /// </summary>
+    /// <param name="opts">BackupOptionsオブジェクト</param>
+    /// <returns>生成されたBackupRequestオブジェクト</returns>
+    /// <exception cref="DirectoryNotFoundException">出力ディレクトリが存在しない場合にスローされる</exception>
     public static BackupRequest Create(BackupOptions opts) {
         // --- 1. OutputDir の存在チェック ---
         var dir = new DirectoryInfo(opts.OutputDir);
@@ -30,6 +39,11 @@ public static class BackupRequestFactory {
         };
     }
 
+    /// <summary>
+    /// BackupOptionsの値の整合性をチェックする。必要に応じて例外をスローする。
+    /// </summary>
+    /// <param name="opts">BackupOptionsオブジェクト</param>
+    /// <exception cref="ArgumentOutOfRangeException">オプションの値が範囲外の場合にスローされる</exception>
     private static void ValidateConsistency(BackupOptions opts) {
         // split size の範囲チェック
         if (opts.SplitSize <= 0 || opts.SplitSize > 5000) {

@@ -11,7 +11,15 @@ using Microsoft.Extensions.Logging;
 
 namespace KBackup.Cli.Commands;
 
+/// <summary>
+/// kintoneアプリのデータを復元するコマンド。
+/// </summary>
 public class RestoreCommand : BaseCommand {
+    /// <summary>
+    /// コンストラクタ。コマンドの名前、説明、およびオプションを定義する。
+    /// </summary>
+    /// <param name="host">ホストオブジェクト</param>
+    /// <param name="logger">ロガーオブジェクト</param>
     public RestoreCommand(IHost host, ILogger<RestoreCommand> logger)
         : base("restore", "Restore Kintone application data from backup", logger) {
 
