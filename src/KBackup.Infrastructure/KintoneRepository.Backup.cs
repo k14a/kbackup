@@ -8,7 +8,7 @@ namespace KBackup.Infrastructure;
 /// <summary>
 /// KintoneRepository クラスは、IKintoneRepository インターフェースを実装するクラスであり、Kintone のバックアップおよびリストア処理を実行するためのリポジトリクラスです。このクラスは、KintoneBackupService を使用してバックアップおよびリストア処理を実行し、ILogger を使用して処理の開始と終了、および処理結果に応じたログメッセージを出力します。
 /// </summary>
-public partial class KintoneRepository : IKintoneRepository {
+public partial class BackupKintoneRepository : IBackupKintoneRepository {
     /// <summary>
     /// BackupAsync メソッドは、Kintone のバックアップ処理を非同期に実行するメソッドであり、BackupRequest オブジェクトを引数に取ります。このメソッドは、バックアップ処理の開始と終了、および処理結果に応じたログメッセージを出力します。バックアップ処理自体は、KintoneBackupService の RunBackupAsync メソッドに委譲されます。処理結果は BackupResult オブジェクトとして返されます。
     /// </summary>

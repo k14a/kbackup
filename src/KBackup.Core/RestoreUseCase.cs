@@ -10,9 +10,9 @@ namespace KBackup.Core;
 /// </summary>
 /// <param name="repository">リストア処理を実行するための Kintone リポジトリ</param>
 /// <param name="logger">ログ出力を行うための ILogger インスタンス</param>
-public class RestoreUseCase(IKintoneRepository repository, ILogger<RestoreUseCase> logger) : IRestoreUseCase {
+public class RestoreUseCase(IBackupKintoneRepository repository, ILogger<RestoreUseCase> logger) : IRestoreUseCase {
 
-    private readonly IKintoneRepository _repository = repository;
+    private readonly IBackupKintoneRepository _repository = repository;
     private readonly ILogger<RestoreUseCase> _logger = logger;
 
     /// <summary>

@@ -4,9 +4,9 @@ using KintoneNetLibrary.Backup.Application.DTOs;
 namespace KBackup.Core.Interfaces;
 
 /// <summary>
-/// IKintoneRepository インターフェースは、Kintone へのバックアップとリストアの操作を定義するインターフェースです。BackupAsync メソッドはバックアップ処理を実行し、RestoreAsync メソッドはリストア処理を実行します。両方のメソッドは非同期で実行され、結果を表すオブジェクトを返します。
+/// IBackupKintoneRepository インターフェースは、Kintone へのバックアップとリストアの操作を定義するインターフェースです。BackupAsync メソッドはバックアップ処理を実行し、RestoreAsync メソッドはリストア処理を実行します。両方のメソッドは非同期で実行され、結果を表すオブジェクトを返します。
 /// </summary>
-public interface IKintoneRepository {
+public interface IBackupKintoneRepository {
     /// <summary>
     /// BackupAsync メソッドは、指定された BackupRequest を使用してバックアップを実行し、BackupResult を返します。
     /// </summary>

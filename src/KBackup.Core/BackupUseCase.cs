@@ -11,9 +11,9 @@ namespace KBackup.Core;
 /// </summary>
 /// <param name="repository">バックアップ処理を実行するためのリポジトリインスタンス</param>
 /// <param name="logger">ログ出力を行うための ILogger インスタンス</param>
-public class BackupUseCase(IKintoneRepository repository, ILogger<BackupUseCase> logger) : IBackupUseCase {
+public class BackupUseCase(IBackupKintoneRepository repository, ILogger<BackupUseCase> logger) : IBackupUseCase {
 
-    private readonly IKintoneRepository _repository = repository;
+    private readonly IBackupKintoneRepository _repository = repository;
     private readonly ILogger<BackupUseCase> _logger = logger;
 
     /// <summary>
