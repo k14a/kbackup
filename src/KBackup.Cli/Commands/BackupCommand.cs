@@ -36,9 +36,9 @@ public class BackupCommand : BaseCommand {
         this.Add(OptionFactory.Pretty);
         this.Add(OptionFactory.EscapeUnicode);
         this.Add(OptionFactory.Query);
-        this.Add(OptionFactory.Split);
+        this.Add(OptionFactory.SplitSize);
 
-        this.Add(OptionFactory.OutputColorMode);
+        this.Add(OptionFactory.ColorMode);
         this.Add(OptionFactory.JsonOutput);
 
         // Define options
@@ -46,9 +46,6 @@ public class BackupCommand : BaseCommand {
             var config = this.LoadConfig(parseResult);
             var opts = BackupOptionsResolver.Resolve(parseResult, config);
             var request = BackupRequestFactory.Create(opts);
-
-            // var factory = host.Services.GetRequiredService<IKintoneAccessFactory>();
-            // var kintoneAccess = factory.Create(request.SubDomain, request.ApiToken);
 
             var useCase = host.Services.GetRequiredService<IBackupUseCase>();
             var result = await useCase.RunBackupAsync(request);
@@ -61,7 +58,7 @@ public class BackupCommand : BaseCommand {
 
             // 色付き出力
             var useColor = CommandUtils.ShouldUseColor(opts.ColorMode);
-            CommandUtils.PrintResult(result, useColor);
+            CommandUtils.PrintResult(result, useColor, "Backup");
         });
     }
 }

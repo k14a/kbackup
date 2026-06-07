@@ -3,8 +3,6 @@ using KBackup.Cli.Resolve;
 using KBackup.Cli.Utils;
 using KBackup.Core.Enums;
 using KBackup.Core.Interfaces;
-using KintoneNetLibrary.Backup.Domain.Enums;
-using KintoneNetLibrary.Domain.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -34,7 +32,7 @@ public class RestoreCommand : BaseCommand {
         this.Add(OptionFactory.DryRun);
         this.Add(OptionFactory.ValidateOnly);
         this.Add(OptionFactory.BatchSize);
-        this.Add(OptionFactory.OutputColorMode);
+        this.Add(OptionFactory.ColorMode);
         this.Add(OptionFactory.JsonOutput);
 
         this.SetAction(async parseResult => {
@@ -51,7 +49,7 @@ public class RestoreCommand : BaseCommand {
             }
 
             var useColor = CommandUtils.ShouldUseColor(opts.ColorMode);
-            CommandUtils.PrintResult(result, useColor);
+            CommandUtils.PrintResult(result, useColor, "Restore");
         });
     }
 }

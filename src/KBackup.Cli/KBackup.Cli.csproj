@@ -10,9 +10,9 @@
     <ItemGroup>
         <ProjectReference Include="..\KBackup.Core\KBackup.Core.csproj" />
         <ProjectReference Include="..\KBackup.Infrastructure\KBackup.Infrastructure.csproj" />
-        <ProjectReference Include="..\..\KintoneNetLibrary\src\KintoneNetLibrary.Backup\KintoneNetLibrary.Backup.csproj" />
-        <ProjectReference Include="..\..\KintoneNetLibrary\src\KintoneNetLibrary.CodeGen\KintoneNetLibrary.CodeGen.csproj" />
-        <ProjectReference Include="..\..\KintoneNetLibrary\src\KintoneNetLibrary\KintoneNetLibrary.csproj" />
+        <ProjectReference Include="..\..\..\KintoneNetLibrary\src\KintoneNetLibrary.Backup\KintoneNetLibrary.Backup.csproj" />
+        <ProjectReference Include="..\..\..\KintoneNetLibrary\src\KintoneNetLibrary.CodeGen\KintoneNetLibrary.CodeGen.csproj" />
+        <ProjectReference Include="..\..\..\KintoneNetLibrary\src\KintoneNetLibrary\KintoneNetLibrary.csproj" />
     </ItemGroup>
 
     <ItemGroup>

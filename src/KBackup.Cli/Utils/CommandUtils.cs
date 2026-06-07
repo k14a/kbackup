@@ -1,7 +1,7 @@
 using Spectre.Console;
 using System.Text.Json;
-using KintoneNetLibrary.Backup.Application.Interfaces;
 using KBackup.Core.Enums;
+using KBackup.Core.Interfaces;
 
 namespace KBackup.Cli.Utils;
 
@@ -48,14 +48,14 @@ public static class CommandUtils {
     /// </summary>
     /// <param name="result">出力する IOperationResult オブジェクト。</param>
     /// <param name="color">色付きで出力するかどうかを指定するオプション。</param>
-    public static void PrintResult(IOperationResult result, bool color) {
+    public static void PrintResult(IOperationResult result, bool color, string operationName) {
         if (!color) {
             Console.WriteLine(result.Success
-                ? "Backup completed successfully."
-                : "Backup failed.");
+                ? $"{operationName} completed successfully."
+                : $"{operationName} failed.");
 
             if (result.IsPartialSuccess) {
-                Console.WriteLine("Backup completed with warnings.");
+                Console.WriteLine($"{operationName} completed with warnings.");
             }
 
             foreach (var w in result.Warnings) {
@@ -70,11 +70,11 @@ public static class CommandUtils {
         }
 
         if (!result.Success) {
-            AnsiConsole.MarkupLine("[red]Backup failed[/]");
+            AnsiConsole.MarkupLine($"[red]{operationName} failed[/]");
         } else if (result.IsPartialSuccess) {
-            AnsiConsole.MarkupLine("[yellow]Backup completed with warnings[/]");
+            AnsiConsole.MarkupLine($"[yellow]{operationName} completed with warnings[/]");
         } else {
-            AnsiConsole.MarkupLine("[green]Backup completed successfully[/]");
+            AnsiConsole.MarkupLine($"[green]{operationName} completed successfully[/]");
         }
 
         foreach (var w in result.Warnings) {

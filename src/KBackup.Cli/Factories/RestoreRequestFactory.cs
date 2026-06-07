@@ -16,19 +16,18 @@ public static class RestoreRequestFactory {
     /// <exception cref="DirectoryNotFoundException"></exception>
     public static RestoreRequest Create(RestoreOptions opts) {
         // --- 1. BackupDir の存在チェック ---
+        if (string.IsNullOrEmpty(opts.BackupDir)) {
+            throw new ArgumentException("--backup-dir は必須です。");
+        }
         var dir = new DirectoryInfo(opts.BackupDir);
         if (!dir.Exists) {
             throw new DirectoryNotFoundException($"Backup directory not found: {dir.FullName}");
         }
 
-        // --- 2. manifest.json の読み込み（必要なら） ---
-        // ※ ここではスケルトンなので未実装
-        // var manifest = ManifestLoader.Load(dir);
-
-        // --- 3. オプションの整合性チェック ---
+        // --- 2. オプションの整合性チェック ---
         ValidateConsistency(opts);
 
-        // --- 4. RestoreRequest の構築 ---
+        // --- 3. RestoreRequest の構築 ---
         return new RestoreRequest {
             SubDomain = opts.SubDomain,
             AppId = opts.AppId,
@@ -63,7 +62,5 @@ public static class RestoreRequestFactory {
             throw new ArgumentOutOfRangeException(paramName, $"BatchSize must be between 1 and {KintoneLimit}.");
         }
 
-        // --- Force の扱い（必要なら追加） ---
-        // if (opts.Force && opts.Mode == RestoreMode.FullReplace) { ... }
     }
 }

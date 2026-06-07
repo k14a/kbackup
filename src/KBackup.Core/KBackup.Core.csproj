@@ -10,9 +10,5 @@
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\..\KintoneNetLibrary\src\KintoneNetLibrary.Backup\KintoneNetLibrary.Backup.csproj" />
-        <ProjectReference Include="..\..\..\KintoneNetLibrary\src\KintoneNetLibrary\KintoneNetLibrary.csproj" />
-    </ItemGroup>
 
 </Project>

@@ -10,7 +10,6 @@ using KintoneNetLibrary.CodeGen.Application.Interfaces;
 using KintoneNetLibrary.CodeGen.Infrastructure.Services;
 using KintoneNetLibrary.Domain.Interfaces;
 
-// using KintoneNetLibrary.Domain.Interfaces;
 using KintoneNetLibrary.Infrastructure.Api;
 using KintoneNetLibrary.Infrastructure.Factories;
 using KintoneNetLibrary.Infrastructure.Services;
@@ -30,12 +29,13 @@ builder.Services.AddLogging(config => {
 // -----------------------------
 // DI: KintoneNetLibrary 系
 // -----------------------------
-builder.Services.AddSingleton<IBackupService, BackupService>();
-builder.Services.AddSingleton<IRestoreService, RestoreService>();
+builder.Services.AddTransient<IBackupService, BackupService>();
+builder.Services.AddTransient<IRestoreService, RestoreService>();
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<ISchemaProvider, SchemaProvider>();
 builder.Services.AddTransient<IKintoneFieldParser, KintoneFieldParser>();
 builder.Services.AddTransient<IMetadataConverter, MetadataConverter>();
+builder.Services.AddTransient<IKintoneApiFactory, KintoneApiFactory>();
 builder.Services.AddTransient<IKintoneAccessFactory, KintoneAccessFactory>();
 builder.Services.AddTransient<IKintoneAppMetadataApi, KintoneAppMetadataApi>();
 
@@ -44,7 +44,9 @@ builder.Services.AddTransient<IKintoneAppMetadataApi, KintoneAppMetadataApi>();
 // -----------------------------
 builder.Services.AddSingleton<IBackupUseCase, BackupUseCase>();
 builder.Services.AddSingleton<IRestoreUseCase, RestoreUseCase>();
-builder.Services.AddSingleton<IBackupKintoneRepository, BackupKintoneRepository>();
+builder.Services.AddSingleton<KintoneRepository>();
+builder.Services.AddSingleton<IBackupKintoneRepository>(p => p.GetRequiredService<KintoneRepository>());
+builder.Services.AddSingleton<IRestoreKintoneRepository>(p => p.GetRequiredService<KintoneRepository>());
 
 var host = builder.Build();
 
@@ -64,13 +66,9 @@ var root = new RootCommand("kbackup CLI tool") {
 // -----------------------------
 var logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("kbackup");
 
-// logger.LogInformation("kbackup CLI started.");
-
 try {
     await root.Parse(args).InvokeAsync();
 
 } catch (Exception ex) {
     logger.LogError(ex, "Unhandled exception occurred.");
 }
-
-// logger.LogInformation("kbackup CLI finished.");

@@ -1,6 +1,5 @@
 using System.CommandLine;
 using KBackup.Cli.Config;
-using KBackup.Core.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace KBackup.Cli.Commands;
@@ -10,8 +9,6 @@ namespace KBackup.Cli.Commands;
 /// </summary>
 public abstract class BaseCommand : Command {
     protected Option<string?> ConfigOption { get; }
-    protected Option<ColorMode> ColorOption { get; }
-    protected Option<bool> JsonOption { get; }
     protected ILogger<BaseCommand> _logger;
 
     /// <summary>
@@ -27,18 +24,7 @@ public abstract class BaseCommand : Command {
             Description = "Path to kbackup.config.json"
         };
 
-        this.ColorOption = new Option<ColorMode>("--color") {
-            DefaultValueFactory = _ => ColorMode.Auto,
-            Description = "Color output mode: auto, always, never"
-        };
-
-        this.JsonOption = new Option<bool>("--json") {
-            Description = "Output result as JSON"
-        };
-
         this.Add(this.ConfigOption);
-        this.Add(this.ColorOption);
-        this.Add(this.JsonOption);
     }
 
     /// <summary>
@@ -51,18 +37,4 @@ public abstract class BaseCommand : Command {
         return ConfigLoader.Load(configPath);
     }
 
-    /// <summary>
-    /// コマンドのオプションを解決するためのユーティリティメソッド。コマンドライン引数、設定ファイル、およびオプションのデフォルト値の優先順位に従って、最終的な値を決定する。
-    /// </summary>
-    /// <typeparam name="T">オプションの型</typeparam>
-    /// <param name="result">コマンドライン引数の解析結果</param>
-    /// <param name="option">対象のオプション</param>
-    /// <param name="configValue">設定ファイルから取得した値</param>
-    /// <returns>最終的に決定されたオプションの値</returns>
-    public static T Resolve<T>(ParseResult result, Option<T> option, T? configValue) {
-        var value = result.GetValue(option);
-        if (value is not null) { return value; }
-        if (configValue is not null) { return configValue; }
-        return (T)option.GetDefaultValue()!;
-    }
 }

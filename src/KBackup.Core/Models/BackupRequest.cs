@@ -48,6 +48,16 @@ public sealed class BackupRequest : BaseKintoneRequest {
     public int SplitSize { get; init; } = 1000;
 
     /// <summary>
+    /// 取得するフィールドコードのリスト。null の場合は全フィールドを取得します。
+    /// </summary>
+    public IList<string>? FieldCodes { get; init; } = null;
+
+    /// <summary>
+    /// カーソルページサイズ。null の場合は KintoneNetLibrary のデフォルト値を使用します。
+    /// </summary>
+    public int? BatchSize { get; init; } = null;
+
+    /// <summary>
     /// ColorMode プロパティは、バックアップオプションの一つであり、ログ出力のカラーモードを表す ColorMode 列挙型のプロパティです。デフォルト値は ColorMode.Auto に設定されており、環境に応じて自動的にカラーモードが選択されます。このプロパティは、バックアッププロセス中のログ出力のカラーモードを制御するために使用されます。
     /// </summary>
     public ColorMode ColorMode { get; init; } = ColorMode.Auto;

@@ -1,5 +1,4 @@
 using KBackup.Core.Enums;
-using KintoneNetLibrary.Backup.Domain.Enums;
 using KintoneNetLibrary.Domain.Common;
 
 namespace KBackup.Cli.Config;
@@ -38,10 +37,6 @@ public sealed class KBackupConfig {
     /// </summary>
     public bool Overwrite { get; set; } = false;
     /// <summary>
-    /// 強制的に操作を実行するかどうか。デフォルトは <c>false</c>。
-    /// </summary>
-    public bool Force { get; set; } = false;
-    /// <summary>
     /// JSON出力を整形するかどうか。デフォルトは <c>false</c>。
     /// </summary>
     public bool Pretty { get; set; } = false;
@@ -63,6 +58,10 @@ public sealed class KBackupConfig {
     /// バックアップディレクトリ。デフォルトは <c>null</c>。
     /// </summary>
     public string? BackupDirectory { get; set; }
+    /// <summary>
+    /// スキーマ差異があっても強制復元するかどうか。デフォルトは <c>false</c>。
+    /// </summary>
+    public bool Force { get; set; } = false;
     /// <summary>
     /// リストアモード。デフォルトは <c>Upsert</c>。
     /// </summary>

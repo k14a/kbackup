@@ -1,6 +1,6 @@
 using KBackup.Core.Interfaces;
+using KBackup.Core.Logging;
 using KBackup.Core.Models;
-using KintoneNetLibrary.Backup.Application.DTOs;
 using Microsoft.Extensions.Logging;
 
 namespace KBackup.Core;
@@ -10,9 +10,9 @@ namespace KBackup.Core;
 /// </summary>
 /// <param name="repository">リストア処理を実行するための Kintone リポジトリ</param>
 /// <param name="logger">ログ出力を行うための ILogger インスタンス</param>
-public class RestoreUseCase(IBackupKintoneRepository repository, ILogger<RestoreUseCase> logger) : IRestoreUseCase {
+public class RestoreUseCase(IRestoreKintoneRepository repository, ILogger<RestoreUseCase> logger) : IRestoreUseCase {
 
-    private readonly IBackupKintoneRepository _repository = repository;
+    private readonly IRestoreKintoneRepository _repository = repository;
     private readonly ILogger<RestoreUseCase> _logger = logger;
 
     /// <summary>
@@ -21,18 +21,23 @@ public class RestoreUseCase(IBackupKintoneRepository repository, ILogger<Restore
     /// <param name="request">リストア処理のリクエスト情報を含む RestoreRequest オブジェクト</param>
     /// <returns>リストア処理の結果を含む RestoreResult オブジェクト</returns>
     public async Task<RestoreResult> RunRestoreAsync(RestoreRequest request) {
-        this._logger.LogInformation("Restore started. App={AppId}", request.AppId);
+        StaticLogMessages.MethodStart(this._logger, message: $"RestoreUseCase started. App={request.AppId}");
 
-        var result = await this._repository.RestoreAsync(request);
+        try {
+            var result = await this._repository.RestoreAsync(request);
 
-        if (!result.Success) {
-            this._logger.LogWarning("Restore finished with errors.");
-        } else if (result.IsPartialSuccess) {
-            this._logger.LogWarning("Restore finished with warnings.");
-        } else {
-            this._logger.LogInformation("Restore finished successfully.");
+            if (!result.Success) {
+                this._logger.LogWarning("RestoreUseCase finished with errors. App={AppId}", request.AppId);
+            } else if (result.IsPartialSuccess) {
+                this._logger.LogWarning("RestoreUseCase finished with warnings. App={AppId}", request.AppId);
+            } else {
+                this._logger.LogInformation("RestoreUseCase finished successfully. App={AppId}", request.AppId);
+            }
+
+            return result;
+
+        } finally {
+            StaticLogMessages.MethodFinish(this._logger, message: $"RestoreUseCase finished. App={request.AppId}");
         }
-
-        return result;
     }
 }

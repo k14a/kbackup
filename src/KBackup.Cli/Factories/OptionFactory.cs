@@ -1,6 +1,5 @@
 using System.CommandLine;
 using KBackup.Core.Enums;
-using KintoneNetLibrary.Backup.Domain.Enums;
 using KintoneNetLibrary.Domain.Common;
 using static KintoneNetLibrary.Domain.Common.KintoneConstants;
 
@@ -40,10 +39,10 @@ public static class OptionFactory {
     /// <summary>
     /// コマンドの出力に色を付けるかどうかを指定するオプション。Auto（自動）、Always（常に）、Never（なし）から選択可能。デフォルトはAuto。
     /// </summary>
-    public static readonly Option<ColorMode> OutputColorMode =
+    public static readonly Option<ColorMode> ColorMode =
         new("--color-mode") {
             Description = "Color output mode (Auto, Always, Never). Default is Auto.",
-            DefaultValueFactory = _ => ColorMode.Auto
+            DefaultValueFactory = _ => KBackup.Core.Enums.ColorMode.Auto
         };
 
     /// <summary>
@@ -121,7 +120,7 @@ public static class OptionFactory {
     /// <summary>
     /// バックアップファイルを分割して保存する際のレコード数を指定するオプション。デフォルトはCursorFetchLimit（1000）。このオプションを使用すると、指定したレコード数ごとにバックアップファイルが分割されるようになる。例えば、Splitを1000に設定すると、1000レコードごとに新しいバックアップファイルが作成される。最大値は5000で、それ以上の値を指定すると例外がスローされる。
     /// </summary>
-    public static readonly Option<int> Split =
+    public static readonly Option<int> SplitSize =
         new("--split") {
             Description = $"Number of records per split file. If not specified, all records are saved in a single file. Default is {CursorFetchLimit}. Maximum is 5000.",
             DefaultValueFactory = _ => CursorFetchLimit

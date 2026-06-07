@@ -14,8 +14,8 @@ public static class BackupRequestFactory {
     /// <returns>生成されたBackupRequestオブジェクト</returns>
     /// <exception cref="DirectoryNotFoundException">出力ディレクトリが存在しない場合にスローされる</exception>
     public static BackupRequest Create(BackupOptions opts) {
-        // --- 1. OutputDir の存在チェック ---
-        var dir = new DirectoryInfo(opts.OutputDir);
+        // --- 1. OutputDirectory の存在チェック ---
+        var dir = new DirectoryInfo(opts.OutputDirectory);
         if (!dir.Exists) {
             throw new DirectoryNotFoundException($"Output directory not found: {dir.FullName}");
         }
@@ -35,7 +35,9 @@ public static class BackupRequestFactory {
             Pretty = opts.Pretty,
             EscapeUnicode = opts.EscapeUnicode,
             Query = opts.Query,
-            SplitSize = opts.SplitSize
+            SplitSize = opts.SplitSize,
+            FieldCodes = opts.FieldCodes,
+            BatchSize = opts.BatchSize
         };
     }
 

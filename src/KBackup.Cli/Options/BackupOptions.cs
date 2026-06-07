@@ -27,7 +27,7 @@ public sealed class BackupOptions {
     /// IncludeFieldSchema は、フィールドのスキーマ情報をバックアップに含めるかどうかを指定します。Overwrite は、既存のバックアップファイルを上書きするかどうかを指定します。
     /// Pretty は、出力されるJSONを整形するかどうかを指定します。EscapeUnicode は、JSON出力でUnicode文字をエスケープするかどうかを指定します。Query は、バックアップ対象のレコードを絞り込むためのクエリを指定します。SplitSize は、バックアップファイルを分割するサイズ（MB単位）を指定します。
     /// </summary>
-    public required string OutputDir { get; init; }
+    public required string OutputDirectory { get; init; }
 
     /// <summary>
     /// Mode は、バックアップのモードを指定します。ColorMode は、コマンドライン出力のカラー表示のモードを指定します。JsonOutput は、コマンドライン出力をJSON形式にするかどうかを指定します。
@@ -63,6 +63,16 @@ public sealed class BackupOptions {
     /// SplitSize は、バックアップファイルを分割するサイズ（MB単位）を指定します。
     /// </summary>
     public int SplitSize { get; init; }
+
+    /// <summary>
+    /// 取得するフィールドコードのリスト。null の場合は全フィールドを取得します。
+    /// </summary>
+    public IList<string>? FieldCodes { get; init; }
+
+    /// <summary>
+    /// カーソルページサイズ。null の場合は KintoneNetLibrary のデフォルト値を使用します。
+    /// </summary>
+    public int? BatchSize { get; init; }
 
     // 出力設定
     /// <summary>

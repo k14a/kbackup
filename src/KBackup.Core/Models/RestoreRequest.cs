@@ -1,6 +1,4 @@
 using KBackup.Core.Enums;
-using KintoneNetLibrary.Backup.Domain.Enums;
-using KintoneNetLibrary.Domain.Common;
 
 namespace KBackup.Core.Models;
 

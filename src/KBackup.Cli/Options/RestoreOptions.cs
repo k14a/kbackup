@@ -1,5 +1,4 @@
 using KBackup.Core.Enums;
-using KintoneNetLibrary.Backup.Domain.Enums;
 
 namespace KBackup.Cli.Options;
 
@@ -27,7 +26,7 @@ public sealed class RestoreOptions {
     /// <summary>
     /// BackupDir は、リストア元のバックアップディレクトリを指定します。Mode は、リストアのモードを指定します。RestoreFiles は、添付ファイルやスペースのファイルをリストアするかどうかを指定します。Force は、既存のデータを上書きするかどうかを指定します。
     /// </summary>
-    public required string BackupDir { get; init; }
+    public required string? BackupDir { get; init; }
 
     /// <summary>
     /// Mode は、リストアのモードを指定します。RestoreFiles は、添付ファイルやスペースのファイルをリストアするかどうかを指定します。Force は、既存のデータを上書きするかどうかを指定します。

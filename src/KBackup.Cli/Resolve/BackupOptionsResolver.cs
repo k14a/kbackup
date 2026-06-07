@@ -1,5 +1,4 @@
 using System.CommandLine;
-using KBackup.Cli.Commands;
 using KBackup.Cli.Config;
 using KBackup.Cli.Factories;
 using KBackup.Cli.Options;
@@ -20,23 +19,25 @@ public static class BackupOptionsResolver {
     public static BackupOptions Resolve(ParseResult result, KBackupConfig? config) {
         return new BackupOptions {
             // BaseKintoneRequest
-            SubDomain = BaseCommand.Resolve(result, OptionFactory.SubDomain, config?.SubDomain),
-            AppId = BaseCommand.Resolve(result, OptionFactory.AppId, config?.AppId ?? 0),
-            ApiToken = BaseCommand.Resolve(result, OptionFactory.ApiToken, config?.ApiToken),
+            SubDomain = OptionResolver.Resolve(result, OptionFactory.SubDomain, config?.SubDomain),
+            AppId = OptionResolver.Resolve(result, OptionFactory.AppId, config?.AppId ?? 0),
+            ApiToken = OptionResolver.Resolve(result, OptionFactory.ApiToken, config?.ApiToken),
 
             // BackupRequest
-            OutputDir = BaseCommand.Resolve(result, OptionFactory.OutputDir, config?.BackupDirectory),
-            DownloadFiles = BaseCommand.Resolve(result, OptionFactory.DownloadFiles, config?.DownloadFiles ?? false),
-            IncludeFieldSchema = BaseCommand.Resolve(result, OptionFactory.IncludeFieldSchema, config?.IncludeFieldSchema ?? false),
-            Overwrite = BaseCommand.Resolve(result, OptionFactory.Overwrite, config?.Overwrite ?? false),
-            Pretty = BaseCommand.Resolve(result, OptionFactory.Pretty, config?.Pretty ?? false),
-            EscapeUnicode = BaseCommand.Resolve(result, OptionFactory.EscapeUnicode, config?.EscapeUnicode ?? false),
-            Query = BaseCommand.Resolve(result, OptionFactory.Query, config?.Query ?? string.Empty),
-            SplitSize = BaseCommand.Resolve(result, OptionFactory.Split, config?.SplitSize ?? 1000),
+            OutputDirectory = OptionResolver.Resolve(result, OptionFactory.OutputDir, config?.OutputDirectory),
+            DownloadFiles = OptionResolver.Resolve(result, OptionFactory.DownloadFiles, config?.DownloadFiles ?? false),
+            IncludeFieldSchema = OptionResolver.Resolve(result, OptionFactory.IncludeFieldSchema, config?.IncludeFieldSchema ?? false),
+            Overwrite = OptionResolver.Resolve(result, OptionFactory.Overwrite, config?.Overwrite ?? false),
+            Pretty = OptionResolver.Resolve(result, OptionFactory.Pretty, config?.Pretty ?? false),
+            EscapeUnicode = OptionResolver.Resolve(result, OptionFactory.EscapeUnicode, config?.EscapeUnicode ?? false),
+            Query = OptionResolver.Resolve(result, OptionFactory.Query, config?.Query ?? string.Empty),
+            SplitSize = OptionResolver.Resolve(result, OptionFactory.SplitSize, config?.SplitSize ?? 1000),
+            FieldCodes = null,
+            BatchSize = null,
 
             // Output settings
-            ColorMode = BaseCommand.Resolve(result, OptionFactory.OutputColorMode, config?.ColorMode ?? Core.Enums.ColorMode.Auto),
-            JsonOutput = BaseCommand.Resolve(result, OptionFactory.JsonOutput, config?.JsonOutput ?? false)
+            ColorMode = OptionResolver.Resolve(result, OptionFactory.ColorMode, config?.ColorMode ?? Core.Enums.ColorMode.Auto),
+            JsonOutput = OptionResolver.Resolve(result, OptionFactory.JsonOutput, config?.JsonOutput ?? false)
         };
     }
 }
