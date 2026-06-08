@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: kbackup をチェックアウト
+        uses: actions/checkout@v4
+        with:
+          path: kbackup
+
+      - name: KintoneNetLibrary をチェックアウト
+        uses: actions/checkout@v4
+        with:
+          repository: k14a/KintoneNetLibrary
+          path: KintoneNetLibrary
+
+      - name: .NET のセットアップ
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: テストを実行
+        run: dotnet test kbackup/kbackup.sln --configuration Release --logger "console;verbosity=normal"
