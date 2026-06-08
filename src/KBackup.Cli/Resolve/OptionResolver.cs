@@ -16,9 +16,11 @@ public static class OptionResolver {
     /// <param name="configValue">設定ファイルから取得した値</param>
     /// <returns>最終的に決定されたオプションの値</returns>
     public static T Resolve<T>(ParseResult result, Option<T> option, T? configValue) {
-        var value = result.GetValue(option);
-        if (value is not null) { return value; }
+        // CLIで明示的に指定された場合はその値を優先する（Implicit=trueはデフォルト値のため除外）
+        if (result.GetResult(option) is { Implicit: false }) {
+            return result.GetValue(option)!;
+        }
         if (configValue is not null) { return configValue; }
-        return (T)option.GetDefaultValue()!;
+        return result.GetValue(option)!;
     }
 }
