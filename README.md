@@ -29,13 +29,58 @@ kbackup は、Kintone のレコードとフィールド情報をバックアッ�
 
 必要に応じて、ローカルツールとして `dotnet tool` から実行することも可能です。
 
-## 4. Usage（最小の使用例）
+## 4. Usage（使用例）
+
+### バックアップ
 
 ```bash
-dotnet run --project src/KBackup.Cli/KBackup.Cli.csproj -- backup --app-id 123 --api-token YOUR_API_TOKEN
+dotnet run --project src/KBackup.Cli/KBackup.Cli.csproj -- backup \
+  --sub-domain example \
+  --app-id 123 \
+  --api-token YOUR_API_TOKEN
 ```
 
-この例では、必要最低限のオプションのみを指定してアプリのバックアップを実行します。
+| オプション | 必須 | 説明 |
+|---|---|---|
+| `--sub-domain` | ✓ | Kintone サブドメイン（例: `example`） |
+| `--app-id` | ✓ | アプリ ID |
+| `--api-token` | | API トークン |
+| `--out-dir` | | バックアップ先の親ディレクトリ（デフォルト: `.`） |
+| `--split` | | ファイルあたりのレコード数（デフォルト: 1000、最大: 5000） |
+| `--query` | | レコードを絞り込むクエリ式 |
+| `--download-files` | | 添付ファイルをダウンロードするか（デフォルト: `true`） |
+| `--include-field-schema` | | フィールドスキーマを含めるか（デフォルト: `true`） |
+| `--overwrite` | | 既存ファイルを上書きするか（デフォルト: `false`） |
+
+### リストア
+
+```bash
+dotnet run --project src/KBackup.Cli/KBackup.Cli.csproj -- restore \
+  --sub-domain example \
+  --app-id 123 \
+  --api-token YOUR_API_TOKEN \
+  --backup-dir backup/AppID000123/20260101_123456
+```
+
+| オプション | 必須 | 説明 |
+|---|---|---|
+| `--sub-domain` | ✓ | Kintone サブドメイン |
+| `--app-id` | ✓ | アプリ ID |
+| `--api-token` | | API トークン |
+| `--backup-dir` | ✓ | バックアップのルートディレクトリ |
+| `--mode` | | 復元モード: `FullReplace` / `Upsert` / `Merge`（デフォルト: `Upsert`） |
+| `--restore-files` | | 添付ファイルも復元するか（デフォルト: `true`） |
+| `--dry-run` | | 実際には変更を行わないドライラン |
+| `--validate-only` | | バリデーションのみ実行 |
+| `--force` | | スキーマ検証をスキップ（要注意） |
+
+復元モードの違い:
+
+| モード | 動作 |
+|---|---|
+| `FullReplace` | 既存レコードをすべて削除してからバックアップを挿入 |
+| `Upsert` | レコード ID が一致すれば更新、なければ新規挿入（デフォルト） |
+| `Merge` | レコード ID が一致すればフィールドをマージ、なければ新規挿入 |
 
 ## 5. Output（生成されるファイル）
 
