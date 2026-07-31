@@ -54,6 +54,7 @@ TestResults/
 TestConfig.json
 appsettings.*.json
 kmodel.config.json
+kbackup.config.json
 
 # その他環境依存
 *.vs/
